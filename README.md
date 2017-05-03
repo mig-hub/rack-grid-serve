@@ -2,7 +2,7 @@ Rack Grid Serve
 ===============
 
 The purpose of `Rack::GridServe` is to provide an alternative to
-[Rack::Gridfs]() which works with the `Mongo` ruby driver version 2.0 
+[Rack::Gridfs](https://github.com/skinandbones/rack-gridfs) which works with the `Mongo` ruby driver version 2.0 
 and above. This driver has a different API and while the `Rack::Gridfs` 
 team is working on it, it is not yet ready.
 
