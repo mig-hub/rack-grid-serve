@@ -2,13 +2,13 @@ require 'mongo'
 require 'rack/request'
 begin
   require 'rack/conditional_get'
-rescue
+rescue LoadError => ex
   require 'rack/conditionalget'
 end
 
 class Rack::GridServe
 
-  VERSION = '0.0.4'
+  VERSION = '0.0.5'
 
   def initialize app, opts={}
     @app = app
