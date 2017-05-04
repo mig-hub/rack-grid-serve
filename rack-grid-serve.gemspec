@@ -17,11 +17,11 @@ Gem::Specification.new do |s|
   s.test_files = 'test.rb'
   s.require_paths = ['lib']
 
-  s.add_dependency('rack')
+  s.add_dependency('rack', '~> 2.0')
   s.add_dependency('mongo', '~> 2.0')
 
   s.add_development_dependency('minitest', '~> 5.8')
-  s.add_development_dependency('rack-test')
+  s.add_development_dependency('rack-test', '~> 0.6')
 
 end
 
