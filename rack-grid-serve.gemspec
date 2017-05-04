@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.test_files = 'test.rb'
   s.require_paths = ['lib']
 
-  s.add_dependency('rack', '~> 2.0')
+  s.add_dependency('rack', '>= 1.0')
   s.add_dependency('mongo', '~> 2.0')
 
   s.add_development_dependency('minitest', '~> 5.8')
