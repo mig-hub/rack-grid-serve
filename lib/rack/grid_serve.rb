@@ -4,7 +4,7 @@ require 'rack/conditional_get'
 
 class Rack::GridServe
 
-  VERSION = '0.0.2'
+  VERSION = '0.0.3'
 
   def initialize app, opts={}
     @app = app
