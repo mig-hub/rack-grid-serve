@@ -1,10 +1,14 @@
 require 'mongo'
 require 'rack/request'
-require 'rack/conditional_get'
+begin
+  require 'rack/conditional_get'
+rescue
+  require 'rack/conditionalget'
+end
 
 class Rack::GridServe
 
-  VERSION = '0.0.3'
+  VERSION = '0.0.4'
 
   def initialize app, opts={}
     @app = app
