@@ -26,7 +26,7 @@ class Rack::GridServe
     if under_prefix? req
       file = find_file req
       if file.nil?
-        [404, {'Content-Type'=>'text/plain'}, 'Not Found']
+        [404, {'Content-Type'=>'text/plain'}, ['Not Found']]
       else
         last_modified = Time.at file['uploadDate'].to_i
         headers = {

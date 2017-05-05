@@ -15,12 +15,12 @@ class TestRackGridServe < MiniTest::Test
   include Rack::Test::Methods
 
   def app
-    Rack::GridServe.new(inner_app, db: DB)
+    Rack::Lint.new(Rack::GridServe.new(inner_app, db: DB))
   end
 
   def inner_app
     lambda {|env| 
-      [200, {'Content-Type'=>'text/plain'}, "Inner"] 
+      [200, {'Content-Type'=>'text/plain'}, ["Inner"]] 
     }
   end
 
