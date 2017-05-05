@@ -8,7 +8,7 @@ end
 
 class Rack::GridServe
 
-  VERSION = '0.0.5'
+  VERSION = '0.0.6'
 
   def initialize app, opts={}
     @app = app
