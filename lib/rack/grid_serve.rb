@@ -28,15 +28,19 @@ class Rack::GridServe
       if file.nil?
         [404, {'Content-Type'=>'text/plain'}, 'Not Found']
       else
-        last_modified = Time.at file.info.upload_date.to_i
+        last_modified = Time.at file['uploadDate'].to_i
         headers = {
-          'Content-Type' => file.info.content_type,
-          'ETag' => file.info.md5,
+          'Content-Type' => file['contentType'],
+          'ETag' => file['md5'],
           'Last-Modified' => last_modified.httpdate,
           'Cache-Control' => @cache_control
         }
         Rack::ConditionalGet.new(lambda {|cg_env|
-          [200, headers, [file.data]]
+          content = String.new
+          @db.fs.open_download_stream(file['_id']) do |stream|
+            content = stream.read
+          end
+          [200, headers, [content]]
         }).call(env)
       end
     else
@@ -61,12 +65,12 @@ class Rack::GridServe
 
   def find_file req
     str = id_or_filename req
-    @db.fs.find_one({
+    @db.fs.find({
       '$or' => [
         {_id: str},
         {filename: str}
       ]
-    })
+    }).first
   end
 
 end
