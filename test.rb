@@ -7,12 +7,16 @@ require 'minitest/autorun'
 MONGO = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'rack-grid-serve-test')
 DB = MONGO.database
 DB.drop
-FILE = Mongo::Grid::File.new('.cowabunga {}', :filename => 'tmnt.css', content_type: 'text/css')
-FILE_ID = DB.fs.insert_one(FILE)
-FILE2 = Mongo::Grid::File.new('.cowabunga {}', :filename => 'amazing tmnt.css', content_type: 'text/css')
-FILE2_ID = DB.fs.insert_one(FILE2)
-FILE3 = Mongo::Grid::File.new('.cowabunga {}', :filename => '/slash-tmnt.css', content_type: 'text/css')
-FILE3_ID = DB.fs.insert_one(FILE3)
+DB.fs.open_upload_stream('tmnt.css', content_type: 'text/css') do |stream|
+  stream.write '.cowabunga {}'
+end
+DB.fs.open_upload_stream('amazing tmnt.css', content_type: 'text/css') do |stream|
+  stream.write '.cowabunga {}'
+end
+DB.fs.open_upload_stream('/slash-tmnt.css', content_type: 'text/css') do |stream|
+  stream.write '.cowabunga {}'
+end
+FILE = DB.fs.find({filename: 'tmnt.css'}).first
 
 module Helpers
 
@@ -24,10 +28,10 @@ module Helpers
 
   def assert_file_found
     assert_equal 200, last_response.status
-    assert_equal FILE.info.content_type, last_response.headers['Content-Type']
+    assert_equal FILE['contentType'], last_response.headers['Content-Type']
     assert_equal 13, last_response.body.size
-    assert_equal FILE.info.md5, last_response.headers['ETag']
-    assert_equal Time.at(FILE.info.upload_date.to_i).httpdate, last_response.headers['Last-Modified']
+    assert_equal FILE['md5'], last_response.headers['ETag']
+    assert_equal Time.at(FILE['uploadDate'].to_i).httpdate, last_response.headers['Last-Modified']
     assert_equal 'no-cache', last_response.headers['Cache-Control']
   end
 
@@ -43,7 +47,7 @@ class TestRackGridServe < MiniTest::Test
   end
 
   def test_finds_file_by_id
-    get "/gridfs/#{FILE_ID}"
+    get "/gridfs/#{FILE['_id']}"
     assert_file_found
   end
 
@@ -63,7 +67,7 @@ class TestRackGridServe < MiniTest::Test
   end
 
   def test_uses_conditional_get
-    get '/gridfs/tmnt.css', {}, {'HTTP_IF_NONE_MATCH'=>FILE.info.md5}
+    get '/gridfs/tmnt.css', {}, {'HTTP_IF_NONE_MATCH'=>FILE['md5']}
     assert_equal 304, last_response.status
   end
 
@@ -104,7 +108,6 @@ class TestRackGridServePrefix < MiniTest::Test
   def test_finds_file_with_custom_prefix
     prefix = "/attachment/prefix/"
     get '/attachment/prefix/tmnt.css'
-    # get '/gridfs/tmnt.css'
     assert_file_found
   end
 
