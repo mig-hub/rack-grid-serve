@@ -94,6 +94,12 @@ class TestRackGridServe < MiniTest::Test
     assert_equal "Inner", last_response.body
   end
 
+  def test_pass_if_prefix_not_at_the_begining
+    get '/before/gridfs/1234'
+    assert_equal 200, last_response.status
+    assert_equal "Inner", last_response.body
+  end
+
 end
 
 class TestRackGridServePrefix < MiniTest::Test
