@@ -52,11 +52,11 @@ class Rack::GridServe
   private
 
   def under_prefix? req
-    req.path_info =~ %r|/#@prefix/(.*)|
+    req.path_info =~ %r|^/#@prefix/(.*)|
   end
 
   def id_or_filename req
-    str = req.path_info.sub %r|/#@prefix/|, ''
+    str = req.path_info.sub %r|^/#@prefix/|, ''
     if BSON::ObjectId.legal? str
       BSON::ObjectId.from_string str
     else
