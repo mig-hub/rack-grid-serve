@@ -14,7 +14,7 @@ class Rack::GridServe
   def initialize app, opts={}
     @app = app
     @db = opts[:db]
-    @prefix = opts[:prefix] || 'gridfs'
+    @prefix = (opts[:prefix] || 'gridfs').gsub(/^\/|\/$/, '')
     @cache_control = opts[:cache_control] || 'no-cache'
   end
 
