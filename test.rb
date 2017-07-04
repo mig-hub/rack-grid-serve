@@ -11,6 +11,10 @@ class TestRackGridServe < MiniTest::Test
   DB.drop
   FILE = Mongo::Grid::File.new('.cowabunga {}', :filename => 'tmnt.css', content_type: 'text/css')
   FILE_ID = DB.fs.insert_one(FILE)
+  FILE2 = Mongo::Grid::File.new('.cowabunga {}', :filename => 'amazing tmnt.css', content_type: 'text/css')
+  FILE2_ID = DB.fs.insert_one(FILE2)
+  FILE3 = Mongo::Grid::File.new('.cowabunga {}', :filename => '/slash-tmnt.css', content_type: 'text/css')
+  FILE3_ID = DB.fs.insert_one(FILE3)
 
   include Rack::Test::Methods
 
@@ -40,6 +44,16 @@ class TestRackGridServe < MiniTest::Test
 
   def test_finds_file_by_name
     get '/gridfs/tmnt.css'
+    assert_file_found
+  end
+
+  def test_finds_file_by_name_with_url_encoding
+    get '/gridfs/amazing%20tmnt.css'
+    assert_file_found
+  end
+
+  def test_finds_file_by_name_with_slash
+    get '/gridfs/slash-tmnt.css'
     assert_file_found
   end
 

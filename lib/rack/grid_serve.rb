@@ -1,5 +1,6 @@
 require 'mongo'
 require 'rack/request'
+require 'rack/utils'
 begin
   require 'rack/conditional_get'
 rescue LoadError => ex
@@ -59,18 +60,22 @@ class Rack::GridServe
     if BSON::ObjectId.legal? str
       BSON::ObjectId.from_string str
     else
-      str
+      Rack::Utils.unescape str
     end
   end
 
   def find_file req
     str = id_or_filename req
-    @db.fs.find({
-      '$or' => [
-        {_id: str},
-        {filename: str}
-      ]
-    }).first
+    if str.is_a? BSON::ObjectId
+      @db.fs.find({_id: str}).first
+    else
+      @db.fs.find({
+        '$or' => [
+          {filename: str},
+          {filename: "/#{str}"}
+        ]
+      }).first
+    end
   end
 
 end
