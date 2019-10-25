@@ -63,11 +63,7 @@ class Rack::GridServe
           headers.delete(CONTENT_LENGTH)
           [304, headers, []]
         else
-          content = String.new
-          @db.fs.open_download_stream(file[ID_KEY]) do |stream|
-            content = stream.read
-          end
-          [200, headers, [content]]
+          [200, headers, @db.fs.open_download_stream(file[ID_KEY])]
         end
       end
     else
