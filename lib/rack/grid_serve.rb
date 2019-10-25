@@ -9,7 +9,7 @@ end
 
 class Rack::GridServe
 
-  VERSION = '0.0.9'.freeze
+  VERSION = '0.0.10'.freeze
 
   DEFAULT_PREFIX = 'gridfs'.freeze
   DEFAULT_CACHE_CONTROL = 'no-cache'.freeze
