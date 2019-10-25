@@ -43,9 +43,9 @@ class Rack::GridServe
   MD5_KEY = 'md5'.freeze
 
   def call env
-    req = Rack::Request.new env
-    if under_prefix? req
-      file = find_file req
+    path_info = env[Rack::PATH_INFO].to_s
+    if under_prefix? path_info
+      file = find_file path_info
       if file.nil?
         NOT_FOUND_RESPONSE
       else
@@ -71,12 +71,12 @@ class Rack::GridServe
 
   private
 
-  def under_prefix? req
-    req.path_info.start_with?(@prefix) and req.path_info.size > @prefix.size 
+  def under_prefix? path_info
+    path_info.start_with?(@prefix) and path_info.size > @prefix.size 
   end
 
-  def id_or_filename req
-    str = req.path_info.sub @prefix, EMPTY_STRING
+  def id_or_filename path_info
+    str = path_info.sub @prefix, EMPTY_STRING
     if BSON::ObjectId.legal? str
       BSON::ObjectId.from_string str
     else
@@ -86,8 +86,8 @@ class Rack::GridServe
 
   OR = '$or'.freeze
 
-  def find_file req
-    str = id_or_filename req
+  def find_file path_info
+    str = id_or_filename path_info
     if str.is_a? BSON::ObjectId
       @db.fs.find({_id: str}).first
     else
