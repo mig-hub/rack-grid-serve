@@ -24,6 +24,7 @@ class Rack::GridServe
     @cache_control = opts[:cache_control] || DEFAULT_CACHE_CONTROL
   end
 
+  PATH_INFO = 'PATH_INFO'.freeze
   CONTENT_TYPE = 'Content-Type'.freeze
   LAST_MODIFIED = 'Last-Modified'.freeze
   CACHE_CONTROL = 'Cache-Control'.freeze
@@ -43,7 +44,7 @@ class Rack::GridServe
   MD5_KEY = 'md5'.freeze
 
   def call env
-    path_info = env[Rack::PATH_INFO].to_s
+    path_info = env[PATH_INFO].to_s
     if under_prefix? path_info
       file = find_file path_info
       if file.nil?
