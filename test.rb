@@ -45,7 +45,7 @@ class TestRackGridServe < MiniTest::Test
   include Helpers
 
   def app
-    Rack::Lint.new(Rack::GridServe.new(inner_app, db: DB))
+    Rack::Lint.new(Rack::GridServe.new(inner_app, db: DB).freeze).freeze
   end
 
   def test_finds_file_by_id
@@ -110,7 +110,9 @@ class TestRackGridServePrefix < MiniTest::Test
   include Helpers
 
   def app
-    Rack::Lint.new(Rack::GridServe.new(inner_app, db: DB, prefix: '/attachment/prefix/'))
+    Rack::Lint.new(
+      Rack::GridServe.new(inner_app, db: DB, prefix: '/attachment/prefix/').freeze
+    ).freeze
   end
 
   def test_finds_file_with_custom_prefix

@@ -24,10 +24,6 @@ class Rack::GridServe
     @cache_control = opts[:cache_control] || DEFAULT_CACHE_CONTROL
   end
 
-  def call env
-    dup._call env
-  end
-
   CONTENT_TYPE = 'Content-Type'.freeze
   LAST_MODIFIED = 'Last-Modified'.freeze
   CACHE_CONTROL = 'Cache-Control'.freeze
@@ -46,7 +42,7 @@ class Rack::GridServe
   ID_KEY = '_id'.freeze
   MD5_KEY = 'md5'.freeze
 
-  def _call env
+  def call env
     req = Rack::Request.new env
     if under_prefix? req
       file = find_file req
