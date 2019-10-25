@@ -4,6 +4,8 @@ require 'rack/grid_serve'
 require 'rack/test'
 require 'minitest/autorun'
 
+Mongo::Logger.logger.level = Logger::ERROR
+
 MONGO = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'rack-grid-serve-test')
 DB = MONGO.database
 DB.drop
