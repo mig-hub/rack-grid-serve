@@ -114,7 +114,7 @@ class TestRackGridServePrefix < MiniTest::Test
   end
 
   def test_finds_file_with_custom_prefix
-    prefix = "/attachment/prefix/"
+    # prefix = "/attachment/prefix/"
     get '/attachment/prefix/tmnt.css'
     assert_file_found
   end

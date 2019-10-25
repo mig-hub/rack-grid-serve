@@ -3,7 +3,7 @@ require 'rack/request'
 require 'rack/utils'
 begin
   require 'rack/conditional_get'
-rescue LoadError => ex
+rescue LoadError
   require 'rack/conditionalget'
 end
 
