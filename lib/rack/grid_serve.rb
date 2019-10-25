@@ -26,6 +26,7 @@ class Rack::GridServe
 
   PATH_INFO = 'PATH_INFO'.freeze
   CONTENT_TYPE = 'Content-Type'.freeze
+  CONTENT_LENGTH = 'Content-Length'.freeze
   LAST_MODIFIED = 'Last-Modified'.freeze
   CACHE_CONTROL = 'Cache-Control'.freeze
   ETAG = 'ETag'.freeze
@@ -57,13 +58,17 @@ class Rack::GridServe
           LAST_MODIFIED => last_modified.httpdate,
           CACHE_CONTROL => @cache_control
         }
-        Rack::ConditionalGet.new(lambda {|cg_env|
+        if can_use_cached?(env, file[MD5_KEY])
+          headers.delete(CONTENT_TYPE)
+          headers.delete(CONTENT_LENGTH)
+          [304, headers, []]
+        else
           content = String.new
           @db.fs.open_download_stream(file[ID_KEY]) do |stream|
             content = stream.read
           end
           [200, headers, [content]]
-        }).call(env)
+        end
       end
     else
       @app.call env
@@ -99,6 +104,16 @@ class Rack::GridServe
         ]
       }).first
     end
+  end
+
+  READ_METHODS = ['GET'.freeze, 'HEAD'.freeze].freeze
+  REQUEST_METHOD = 'REQUEST_METHOD'.freeze
+  HTTP_IF_NONE_MATCH = 'HTTP_IF_NONE_MATCH'.freeze
+
+  def can_use_cached? env, md5
+    READ_METHODS.include?(env[REQUEST_METHOD]) and 
+      env[HTTP_IF_NONE_MATCH] and 
+      env[HTTP_IF_NONE_MATCH] == md5
   end
 
 end
