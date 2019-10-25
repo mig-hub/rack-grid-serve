@@ -14,7 +14,8 @@ class Rack::GridServe
   def initialize app, opts={}
     @app = app
     @db = opts[:db]
-    @prefix = (opts[:prefix] || 'gridfs').gsub(/^\/|\/$/, '')
+    @prefix = (opts[:prefix] || 'gridfs').gsub(/\A\/|\/\z/, '')
+    @prefix = "/#{@prefix}/".freeze
     @cache_control = opts[:cache_control] || 'no-cache'
   end
 
@@ -52,11 +53,11 @@ class Rack::GridServe
   private
 
   def under_prefix? req
-    req.path_info =~ %r|^/#@prefix/(.*)|
+    req.path_info.start_with?(@prefix) and req.path_info.size > @prefix.size 
   end
 
   def id_or_filename req
-    str = req.path_info.sub %r|^/#@prefix/|, ''
+    str = req.path_info.sub @prefix, ''
     if BSON::ObjectId.legal? str
       BSON::ObjectId.from_string str
     else
