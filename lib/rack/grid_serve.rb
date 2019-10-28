@@ -1,11 +1,6 @@
 require 'mongo'
 require 'rack/request'
 require 'rack/utils'
-begin
-  require 'rack/conditional_get'
-rescue LoadError
-  require 'rack/conditionalget'
-end
 
 class Rack::GridServe
 
