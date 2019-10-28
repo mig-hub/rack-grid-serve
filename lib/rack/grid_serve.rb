@@ -4,7 +4,7 @@ require 'rack/utils'
 
 class Rack::GridServe
 
-  VERSION = '0.0.10'.freeze
+  VERSION = '0.0.11'.freeze
 
   DEFAULT_PREFIX = 'gridfs'.freeze
   DEFAULT_CACHE_CONTROL = 'no-cache'.freeze
